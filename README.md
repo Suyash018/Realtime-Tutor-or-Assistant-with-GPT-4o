@@ -16,6 +16,10 @@ https://github.com/Suyash018/Realtime-Tutor-or-Assistant-with-GPT-4o/assets/7390
 
 
 
+https://github.com/Suyash018/Realtime-Tutor-or-Assistant-with-GPT-4o/assets/73903830/ed0c7b74-8a28-4d0a-95bd-71ae901df635
+
+
+
 ## Features
 
 - Voice input using PyAudio
