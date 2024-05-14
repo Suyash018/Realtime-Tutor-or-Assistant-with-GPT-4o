@@ -4,6 +4,13 @@ This Python script is designed to act as a voice-controlled assistant that uses 
 
 ## Tutorial
 
+**For Teaching Assistant**
+
+https://github.com/Suyash018/Realtime-Tutor-or-Assistant-with-GPT-4o/assets/73903830/c8f3a7c1-5917-4c62-b495-cd04574a0ec1
+
+**For Normal Assistant**
+
+
 
 ## Features
 
