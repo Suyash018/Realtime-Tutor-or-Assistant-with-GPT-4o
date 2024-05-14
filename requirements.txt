@@ -1,0 +1,14 @@
+webrtcvad
+pyaudio
+numpy
+
+faster-whisper
+pydub
+
+transformers 
+optimum 
+accelerate
+#pytorch
+
+openai
+opencv-python
