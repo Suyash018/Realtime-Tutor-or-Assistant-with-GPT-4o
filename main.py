@@ -17,15 +17,16 @@ from openai import OpenAI
 import time
 
 
-# Constants
+# Constants for audio capturing
 FORMAT = pyaudio.paInt16
 CHANNELS = 1
 RATE = 16000
 CHUNK_DURATION_MS = 30  # milliseconds
 CHUNK_SIZE = int(RATE * CHUNK_DURATION_MS / 1000)  # samples per chunk
 SILENCE_THRESHOLD = 50  # adjust this threshold according to your environment
-TARGET_DURATION_MS = 700  # milliseconds
+TARGET_DURATION_MS = 700  # Form Senetence after this much silence
 
+#webrtc VAD
 def is_silence(chunk):
     return not vad.is_speech(chunk, RATE)
 
@@ -37,23 +38,18 @@ vad = webrtcvad.Vad()
 vad.set_mode(3)  # Aggressive mode for better voice detection
 
 
-
-
-
-
-
-from io import BytesIO
-import base64
-import pyautogui
-from openai import OpenAI 
-
-
+#Intialize GPT-4o
 MODEL="gpt-4o"
 client = OpenAI()
 
+prompt= """You are a helpful assistant. Ignore the left side of the image and use ONLY right side of the image. 
+                             HELP the student to THINK. SEE if he is solving the question correctly.
+                             DONOT solve the whole Question give him steps and HINT to solve it.
+                             Give concise answers not more than 20 words long. Use the image as a reference to check if they are going the right way.
+                             I repeat Try to be CONCISE"""
 
 
-# Open stream
+# Open audio stream to get audio from microphone
 stream = audio.open(format=FORMAT, channels=CHANNELS, rate=RATE,
                      input=True, frames_per_buffer=CHUNK_SIZE)
 
@@ -67,7 +63,7 @@ try:
         is_silent = is_silence(chunk)
         if is_silent:
             accumulated_silence += CHUNK_DURATION_MS
-            if accumulated_silence >= TARGET_DURATION_MS:
+            if accumulated_silence >= TARGET_DURATION_MS: # form Sentences if only there is silence for more than given time
 
                 if accumulated_data != b"" :
                     t0 = time.time()
@@ -103,17 +99,13 @@ try:
 
 
 
-
+                    #answer GPT
                     QUESTION=transcription
 
                     response = client.chat.completions.create(
                         model=MODEL,
                         messages=[
-                            {"role": "system", "content": """You are a helpful assistant. Ignore the left side of the image and use ONLY right side of the image. 
-                             HELP the student to THINK. SEE if he is solving the question correctly.
-                             DONOT solve the whole Question give him steps and HINT to solve it.
-                             Give concise answers not more than 20 words long. Use the image as a reference to check if they are going the right way.
-                             I repeat Try to be CONCISE"""},
+                            {"role": "system", "content": prompt},
                             {"role": "user", "content": [
                                 {"type": "text", "text": QUESTION},
                                 {"type": "image_url", "image_url": {
@@ -123,15 +115,10 @@ try:
                         ],
                         temperature=0.0,
                     )
-
                     t4= time.time()
 
-                    
-
-
                     print("GPT answer= ",response.choices[0].message.content)
-                # segments, info = model.transcribe('output.wav', beam_size=5)
-                # print(segments)
+
                     print("\n Audio conversion",t1-t0)
                     print("Take Image= ",t3-t2)
                     print("Transcription Time= ",t2-t1)

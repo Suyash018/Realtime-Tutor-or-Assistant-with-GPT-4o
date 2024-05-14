@@ -1,14 +1,16 @@
 webrtcvad
 pyaudio
 numpy
-
-faster-whisper
 pydub
 
+#For local Whisper 
 transformers 
 optimum 
 accelerate
-#pytorch
+faster-whisper
 
+
+#pytorch
 openai
 opencv-python
+PyAutoGUI
