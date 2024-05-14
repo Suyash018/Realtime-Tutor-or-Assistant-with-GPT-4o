@@ -42,11 +42,35 @@ vad.set_mode(3)  # Aggressive mode for better voice detection
 MODEL="gpt-4o"
 client = OpenAI()
 
-prompt= """You are a helpful assistant. Ignore the left side of the image and use ONLY right side of the image. 
-                             HELP the student to THINK. SEE if he is solving the question correctly.
-                             DONOT solve the whole Question give him steps and HINT to solve it.
-                             Give concise answers not more than 20 words long. Use the image as a reference to check if they are going the right way.
-                             I repeat Try to be CONCISE"""
+promptTeach= """YYou are an educational assistant designed to help students learn by solving questions step-by-step and providing helpful hints. When given a question, break down the solution into clear, manageable steps, but don't give all the steps or the final answer at once. Instead, offer hints to guide the student and encourage them to think critically. Your goal is to facilitate understanding and help the student arrive at the solution themselves.
+
+You are an educational assistant designed to help students learn by solving questions step-by-step and providing helpful hints. When given a question, break down the solution into clear, manageable steps without giving all the steps at once. Additionally, offer hints to guide the student without giving away the entire answer immediately. Your goal is to facilitate understanding and encourage the student to think critically about the problem.
+
+For example:
+1. Restate the problem clearly.
+2. Break the problem down into smaller parts.
+3. Explain the first step in detail and then offer a hint for the next step.
+4. Continue this pattern, providing explanations and hints as needed without revealing all steps at once.
+5. Summarize the solution and key concepts learned.
+6. make the solution concise not more than 10 words
+
+Sample interaction:
+- user: Can you help me solve this question? I'm unable to do it.
+- system: Sure, I'd be happy to help! We need to find the length of \( QR \) in the right triangle \( \triangle PQR \) where \( PQ = 12 \) cm and \( PR = 13 \) cm. First, can you identify which side is the hypotenuse?
+- user: Yes, \( PR \) is the hypotenuse.
+- system: Correct! Now, can you write down the Pythagorean theorem formula for this triangle?
+- user: \( PR^2 = PQ^2 + QR^2 \)
+- system: Great! Now, substitute the given values into the equation and see what you get for \( QR \).
+
+Remember, your goal is to encourage the student to think through each step, providing guidance and hints as necessary.
+
+IMPORTANT make the answer concise not more than 10 words
+"""
+
+
+promptHelp= """You are a helpful assistant. Ignore the left side of the image and use ONLY right side of the image. 
+                            Give concise answers not more than 20 words long. Help the user with their query.
+                             I repeat Try to be CONCISE and formal"""
 
 
 # Open audio stream to get audio from microphone
@@ -105,7 +129,7 @@ try:
                     response = client.chat.completions.create(
                         model=MODEL,
                         messages=[
-                            {"role": "system", "content": prompt},
+                            {"role": "system", "content": promptHelp},
                             {"role": "user", "content": [
                                 {"type": "text", "text": QUESTION},
                                 {"type": "image_url", "image_url": {
@@ -119,11 +143,11 @@ try:
 
                     print("GPT answer= ",response.choices[0].message.content)
 
-                    print("\n Audio conversion",t1-t0)
-                    print("Take Image= ",t3-t2)
-                    print("Transcription Time= ",t2-t1)
-                    print("Time taken by GPT= ",t4-t3)
-                    print("Total Time = ",t4-t0 )
+                    # print("\n Audio conversion",t1-t0)
+                    # print("Take Image= ",t3-t2)
+                    # print("Transcription Time= ",t2-t1)
+                    # print("Time taken by GPT= ",t4-t3)
+                    # print("Total Time = ",t4-t0 )
 
                     accumulated_data=b""
 
